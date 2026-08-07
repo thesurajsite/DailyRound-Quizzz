@@ -6,12 +6,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -20,6 +24,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -39,95 +45,87 @@ fun ResultScreen(
     onRestart: () -> Unit,
     onClose: () -> Unit,
 ) {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(Color(0xFF101215)),
-    ) {
-        IconButton(
-            onClick = onClose,
+    Scaffold(
+        containerColor = Color(0xFF101215),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        bottomBar = {
+            Button(
+                onClick = onRestart,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .navigationBarsPadding()
+                        .padding(bottom = 16.dp)
+                        .height(52.dp),
+                shape = RoundedCornerShape(18.dp),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color(0xFF101215),
+                    ),
+            ) {
+                Text(text = "Restart Quiz", fontWeight = FontWeight.Bold)
+            }
+        },
+    ) { innerPadding ->
+        Box(
             modifier =
                 Modifier
-                    .align(Alignment.TopStart)
-                    .padding(8.dp),
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
-            Icon(
-                imageVector = Icons.Filled.Close,
-                contentDescription = "Close",
-                tint = Color.White,
-            )
-        }
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier =
-                Modifier
-                    .align(Alignment.Center)
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-        ) {
-            Text(
-                text = "Congratulations!",
-                color = Color.White,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(Modifier.height(12.dp))
-            Text(
-                text = "You've completed the quiz.\nHere's your performance summary.",
-                color = Color.White.copy(alpha = 0.7f),
-                textAlign = TextAlign.Center,
-            )
-            Spacer(Modifier.height(40.dp))
-
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                StatCard(
-                    label = "Correct Answers",
-                    value = "$correctAnswers/$totalQuestions",
-                    valueColor = Color(0xFF31C45D),
-                    modifier = Modifier.weight(1f),
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp)
+                        .padding(top = 100.dp, bottom = 24.dp),
+            ) {
+                Text(
+                    text = "Congratulations!",
+                    color = Color.White,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
                 )
-                StatCard(
-                    label = "Highest Streak",
-                    value = "$highestStreak",
-                    valueColor = Color.White,
-                    modifier = Modifier.weight(1f),
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = "You've completed the quiz.\nHere's your performance summary.",
+                    color = Color.White.copy(alpha = 0.7f),
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(Modifier.height(40.dp))
+
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    StatCard(
+                        label = "Correct Answers",
+                        value = "$correctAnswers/$totalQuestions",
+                        valueColor = Color(0xFF31C45D),
+                        modifier = Modifier.weight(1f),
+                    )
+                    StatCard(
+                        label = "Highest Streak",
+                        value = "$highestStreak",
+                        valueColor = Color.White,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                Spacer(Modifier.height(20.dp))
+                Text(
+                    text = "Your best streak was $highestStreak consecutive answers.",
+                    color = Color.White.copy(alpha = 0.7f),
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = "Skipped Questions: $skippedQuestions",
+                    color = Color.White.copy(alpha = 0.6f),
                 )
             }
-            Spacer(Modifier.height(20.dp))
-            Text(
-                text = "Your best streak was $highestStreak consecutive answers.",
-                color = Color.White.copy(alpha = 0.7f),
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(Modifier.height(12.dp))
-            Text(
-                text = "Skipped Questions: $skippedQuestions",
-                color = Color.White.copy(alpha = 0.6f),
-            )
-        }
-
-        Button(
-            onClick = onRestart,
-            modifier =
-                Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .height(52.dp)
-                    .padding(horizontal = 24.dp)
-                    .navigationBarsPadding()
-                    .padding(bottom = 16.dp),
-            shape = RoundedCornerShape(18.dp),
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color(0xFF101215),
-                ),
-        ) {
-            Text(text = "Restart Quiz", fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -166,4 +164,17 @@ private fun StatCard(
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun ResultScreenPreview() {
+    ResultScreen(
+        correctAnswers = 8,
+        totalQuestions = 10,
+        highestStreak = 5,
+        skippedQuestions = 1,
+        onRestart = {},
+        onClose = {},
+    )
 }

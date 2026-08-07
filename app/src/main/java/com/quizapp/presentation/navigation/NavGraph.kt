@@ -1,7 +1,9 @@
 package com.quizapp.presentation.navigation
 
 import android.app.Activity
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -19,6 +21,7 @@ fun QuizNavGraph(navController: NavHostController = rememberNavController()) {
     NavHost(
         navController = navController,
         startDestination = Screen.MainGraph,
+        modifier = Modifier.fillMaxSize()
     ) {
         mainGraph(navController)
     }
@@ -30,7 +33,7 @@ private fun NavGraphBuilder.mainGraph(navController: NavHostController) {
             SplashScreen(
                 onQuizReady = {
                     navController.navigate(Screen.Quiz) {
-                        popUpTo(Screen.Splash) { inclusive = true }
+                        popUpTo<Screen.Splash> { inclusive = true }
                     }
                 },
             )
@@ -40,7 +43,7 @@ private fun NavGraphBuilder.mainGraph(navController: NavHostController) {
             QuizScreen(
                 onQuizFinished = { correct, total, highest, skipped ->
                     navController.navigate(Screen.Result(correct, highest, skipped, total)) {
-                        popUpTo(Screen.Quiz) { inclusive = true }
+                        popUpTo<Screen.Quiz> { inclusive = true }
                     }
                 },
             )
@@ -56,7 +59,7 @@ private fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 totalQuestions = args.total,
                 onRestart = {
                     navController.navigate(Screen.Quiz) {
-                        popUpTo(Screen.Result) { inclusive = true }
+                        popUpTo<Screen.Result> { inclusive = true }
                     }
                 },
                 onClose = {
